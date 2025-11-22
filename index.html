@@ -8,14 +8,44 @@
     <meta name="description" content="David Gubala's online development playground. Explore projects and resources by David Gubala." />
     <meta name="keywords" content="David Gubala, DavidGubala, Gubala.dev, Gubala Development, development, programming, projects" />
     <style>
+      :root {
+        --bg: #ffffff;
+        --text: #222;
+        --link: #0366d6;
+        --meta: #666;
+        --border: #e1e4e8;
+        --toggle-hover: #f6f8fa;
+      }
+
+      /* Dark variables applied if system prefers dark (and not manually light) OR if manually dark */
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0d1117;
+          --text: #c9d1d9;
+          --link: #58a6ff;
+          --meta: #8b949e;
+          --border: #30363d;
+          --toggle-hover: #21262d;
+        }
+      }
+
+      [data-theme="dark"] {
+        --bg: #0d1117;
+        --text: #c9d1d9;
+        --link: #58a6ff;
+        --meta: #8b949e;
+        --border: #30363d;
+        --toggle-hover: #21262d;
+      }
+
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         line-height: 1.6;
         max-width: 650px;
         margin: 60px auto;
         padding: 0 20px;
-        color: #222;
-        background: #fff;
+        color: var(--text);
+        background: var(--bg);
       }
 
       h1 {
@@ -25,7 +55,7 @@
       }
 
       .tagline {
-        color: #666;
+        color: var(--meta);
         margin-bottom: 2rem;
       }
 
@@ -35,8 +65,10 @@
       }
 
       ul ul {
-        margin-left: 2rem;
+        margin-left: 1rem;
         margin-top: 0.5rem;
+        padding-left: 1rem;
+        border-left: 2px solid var(--border);
       }
 
       li {
@@ -44,31 +76,73 @@
       }
 
       a {
-        color: #0366d6;
+        color: var(--link);
         text-decoration: none;
+        transition: opacity 0.2s ease;
       }
 
       a:hover {
         text-decoration: underline;
+        opacity: 0.8;
       }
 
       .coming-soon {
-        color: #999;
+        color: var(--meta);
       }
 
       .coming-soon::after {
         content: ' (coming soon)';
         font-size: 0.9em;
+        opacity: 0.8;
       }
 
       hr {
         margin: 2rem 0;
         border: 0;
-        border-top: 1px solid #e1e4e8;
+        border-top: 1px solid var(--border);
+      }
+
+      .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 6px;
+        color: var(--text);
+        opacity: 0.7;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .theme-toggle:hover {
+        background: var(--toggle-hover);
+        opacity: 1;
+      }
+
+      .theme-icon {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
       }
     </style>
   </head>
   <body>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+      <!-- Sun Icon (shown in dark mode) -->
+      <svg class="theme-icon sun-icon" viewBox="0 0 24 24" style="display: none;">
+        <path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2V4h.01M12 20v-3.01M4 12H4.01M7.757 7.757l-2.12-2.12M18.363 18.364l-2.12-2.12M20 12h-3.01M16.243 7.757l2.12-2.12M5.637 18.364l2.12-2.12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <!-- Moon Icon (shown in light mode) -->
+      <svg class="theme-icon moon-icon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <h1>Gubala.dev</h1>
     <p class="tagline">An online development playground.</p>
     
@@ -100,6 +174,44 @@
     <p><strong>Admin:</strong> <a href="mailto:david@gubala.dev">david@gubala.dev</a></p>
 
     <script>
+      // Theme Toggle Logic
+      const toggleBtn = document.getElementById('theme-toggle');
+      const sunIcon = document.querySelector('.sun-icon');
+      const moonIcon = document.querySelector('.moon-icon');
+      const html = document.documentElement;
+
+      function updateIcons(theme) {
+        if (theme === 'dark') {
+          sunIcon.style.display = 'block';
+          moonIcon.style.display = 'none';
+        } else {
+          sunIcon.style.display = 'none';
+          moonIcon.style.display = 'block';
+        }
+      }
+
+      // Initialize
+      const savedTheme = localStorage.getItem('theme');
+      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme) {
+        html.setAttribute('data-theme', savedTheme);
+        updateIcons(savedTheme);
+      } else if (systemDark) {
+        // If system is dark, we don't set attribute (CSS handles it), but update icon
+        updateIcons('dark');
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateIcons(newTheme);
+      });
+
+      // PostHog Analytics
       !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
       posthog.init('phc_wANjAdyr8WJ4zSb3Zb81QqY3nihbZggi2J2KLsW2VRy', {api_host: 'https://us.i.posthog.com'})
       posthog.capture('gubala.dev: visited');
