@@ -180,6 +180,8 @@
 
       /* Footer Controls */
       .footer-controls {
+        position: relative; /* Ensure stacking context */
+        z-index: 20; /* Sit above main content (z-index: 1) so dropdowns overlap */
         display: inline-flex;
         align-items: center;
         gap: 10px;
