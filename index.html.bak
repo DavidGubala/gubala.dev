@@ -7,15 +7,9 @@
     <title>Gubala.dev - Link Hub</title>
     <meta name="description" content="David Gubala's online development playground. Explore projects and resources by David Gubala." />
     <meta name="keywords" content="David Gubala, DavidGubala, Gubala.dev, Gubala Development, development, programming, projects" />
-    <meta property="og:title" content="Gubala.dev - Link Hub" />
-    <meta property="og:description" content="David Gubala's online development playground. Explore projects and resources by David Gubala." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://gubala.dev" />
-    <meta name="twitter:card" content="summary_large_image" />
     <style>
       :root {
         --bg: #ffffff;
-        --bg-rgb: 255, 255, 255;
         --text: #222;
         --link: #0366d6;
         --meta: #666;
@@ -27,7 +21,6 @@
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme="light"]) {
           --bg: #0d1117;
-          --bg-rgb: 13, 17, 23;
           --text: #c9d1d9;
           --link: #58a6ff;
           --meta: #8b949e;
@@ -38,7 +31,6 @@
 
       [data-theme="dark"] {
         --bg: #0d1117;
-        --bg-rgb: 13, 17, 23;
         --text: #c9d1d9;
         --link: #58a6ff;
         --meta: #8b949e;
@@ -54,35 +46,6 @@
         padding: 0 20px;
         color: var(--text);
         background: var(--bg);
-      }
-
-      main {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Apply backdrop-filter directly to text containers for better readability */
-      h1, p.tagline, nav, .admin-contact {
-        background: rgba(var(--bg-rgb), 0.7);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        padding: 5px 10px;
-        border-radius: 6px;
-        display: inline-block; /* Wraps tightly around content */
-      }
-
-      /* Specific tweak for nav to handle block layout */
-      nav {
-        display: block; 
-        margin-top: 10px;
-      }
-
-      /* Fallback for browsers without backdrop-filter */
-      @supports not (backdrop-filter: blur(4px)) {
-        h1, p.tagline, nav, .footer-controls, .admin-contact {
-          background: var(--bg);
-          opacity: 0.9;
-        }
       }
 
       h1 {
@@ -154,7 +117,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1001; /* Ensure it sits above main content */
       }
 
       .theme-toggle:hover {
@@ -180,17 +142,12 @@
 
       /* Footer Controls */
       .footer-controls {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
         color: var(--meta);
         font-size: 0.95rem;
-        background: rgba(var(--bg-rgb), 0.7);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        padding: 5px 10px;
-        border-radius: 6px;
       }
 
       .separator {
@@ -471,34 +428,6 @@
 
       /* Mobile Responsive */
       @media (max-width: 480px) {
-        /* Reduce margins and sizes for mobile */
-        body {
-          margin: 20px auto;
-          padding: 0 15px;
-        }
-
-        /* Adjust toggle position for mobile to fit tight corners */
-        .theme-toggle {
-          top: 10px;
-          right: 10px;
-        }
-
-        h1 {
-          font-size: 1.75rem;
-        }
-
-        .tagline {
-          margin-bottom: 1.5rem;
-        }
-
-        hr {
-          margin: 1.5rem 0;
-        }
-
-        li {
-          margin: 0.3rem 0;
-        }
-
         .controls-container {
           bottom: 10px;
           right: 10px; /* Keep corner but tighter */
@@ -607,53 +536,49 @@
       </svg>
     </button>
 
-    <main>
-      <h1>Gubala.dev</h1>
-      <p class="tagline">An online development playground.</p>
-      
-      <nav>
+    <h1>Gubala.dev</h1>
+    <p class="tagline">An online development playground.</p>
+    
+    <ul>
+      <li>
+        <a href="https://david.gubala.dev">david.gubala.dev</a>
         <ul>
           <li>
-            <a href="https://david.gubala.dev">david.gubala.dev</a>
-            <ul>
-              <li>
-                <a href="https://caniridemymotorcycle.com">caniridemymotorcycle.com</a>
-              </li>
-              <li>
-                <a href="https://mystockwatchlist.com">mystockwatchlist.com</a>
-              </li>
-              <li>
-                <a href="https://sitespeedlog.gubala.dev/">sitespeedlog.gubala.dev</a>
-              </li>
-              <li>
-                <span class="coming-soon">invoiceapp.gubala.dev</span>
-              </li>
-              <li>
-                <span class="coming-soon">agent07.gubala.dev</span>
-              </li>
-            </ul>
+            <a href="https://caniridemymotorcycle.com">caniridemymotorcycle.com</a>
+          </li>
+          <li>
+            <a href="https://mystockwatchlist.com">mystockwatchlist.com</a>
+          </li>
+          <li>
+            <a href="https://sitespeedlog.gubala.dev/">sitespeedlog.gubala.dev</a>
+          </li>
+          <li>
+            <span class="coming-soon">invoiceapp.gubala.dev</span>
+          </li>
+          <li>
+            <span class="coming-soon">agent07.gubala.dev</span>
           </li>
         </ul>
-      </nav>
-    </main>
+      </li>
+    </ul>
 
     <hr>
 
-    <footer class="footer-controls">
+    <div class="footer-controls">
       <span class="dropdown">
-        <button class="inline-btn" id="code-btn" aria-haspopup="true" aria-expanded="false">Cool Source ▼</button>
-        <div class="dropdown-menu" id="code-dropdown" role="menu">
-          <button class="dropdown-item" role="menuitem" onclick="showCode('starry')">Starry Night Logic</button>
-          <button class="dropdown-item" role="menuitem" onclick="showCode('mountains')">Mountain Parallax Logic</button>
+        <button class="inline-btn" id="code-btn">Cool Source ▼</button>
+        <div class="dropdown-menu" id="code-dropdown">
+          <button class="dropdown-item" onclick="showCode('starry')">Starry Night Logic</button>
+          <button class="dropdown-item" onclick="showCode('mountains')">Mountain Parallax Logic</button>
         </div>
       </span>
       
       <span class="separator">•</span>
       
       <button class="inline-btn" onclick="openPlayground()">Playground</button>
-    </footer>
+    </div>
 
-    <p class="admin-contact"><strong>Admin:</strong> <a href="mailto:david@gubala.dev">david@gubala.dev</a></p>
+    <p><strong>Admin:</strong> <a href="mailto:david@gubala.dev">david@gubala.dev</a></p>
 
     <script>
       // Theme Toggle Logic
@@ -711,19 +636,6 @@
 
       // Active config (starts as copy of default)
       let config = JSON.parse(JSON.stringify(defaultConfig));
-
-      // Helper to parse color once
-      function parseHexColor(hex) {
-        hex = hex || '#465064';
-        return {
-            r: parseInt(hex.slice(1, 3), 16),
-            g: parseInt(hex.slice(3, 5), 16),
-            b: parseInt(hex.slice(5, 7), 16)
-        };
-      }
-      
-      // Cached color values to avoid parsing in loop
-      let cachedMtnColor = parseHexColor(config.mountains.color);
 
       // Starry Background & Mountains Logic
       const starCanvas = document.getElementById('star-bg');
@@ -853,8 +765,11 @@
         starCtx.restore();
 
         // --- Mountains ---
-        // Use cached color
-        const { r: rBase, g: gBase, b: bBase } = cachedMtnColor;
+        // Parse config color
+        const hex = config.mountains.color || '#465064';
+        const rBase = parseInt(hex.slice(1, 3), 16);
+        const gBase = parseInt(hex.slice(3, 5), 16);
+        const bBase = parseInt(hex.slice(5, 7), 16);
 
         mountains.forEach((mountain, index) => {
           const parallaxX = (mouseXRatio - 0.5) * (10 + index * 20);
@@ -885,21 +800,7 @@
         requestAnimationFrame(animateStars);
       }
 
-      // Debounce helper
-      function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-          const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-          };
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-        };
-      }
-
-      const debouncedResize = debounce(resizeStarCanvas, 200);
-      window.addEventListener('resize', debouncedResize);
+      window.addEventListener('resize', resizeStarCanvas);
       document.addEventListener('mousemove', (e) => {
          mouseXRatio = e.clientX / window.innerWidth;
       });
@@ -966,11 +867,6 @@
         const newPeaks = document.getElementById('mtn-peaks').value;
         const newColor = document.getElementById('mtn-color').value;
 
-        // Update cached color if changed
-        if (newColor !== config.mountains.color) {
-             cachedMtnColor = parseHexColor(newColor);
-        }
-
         // Check for structural change (Layers or Peaks)
         if (newLayers !== config.mountains.layers.toString() || newPeaks !== config.mountains.peaks.toString()) {
            // If peaks changed, we must regenerate structure (false).
@@ -1001,9 +897,6 @@
       function resetDefaults() {
         config = JSON.parse(JSON.stringify(defaultConfig));
         
-        // Reset cached color
-        cachedMtnColor = parseHexColor(config.mountains.color);
-
         // Reset UI inputs
         document.getElementById('star-density').value = config.stars.density;
         document.getElementById('star-rotation').value = config.stars.rotation;
@@ -1027,28 +920,13 @@
       // Toggle Dropdown
       codeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const isShown = codeDropdown.classList.toggle('show');
-        codeBtn.setAttribute('aria-expanded', isShown);
+        codeDropdown.classList.toggle('show');
       });
 
       // Close dropdown when clicking outside
       document.addEventListener('click', (e) => {
         if (!codeBtn.contains(e.target) && !codeDropdown.contains(e.target)) {
           codeDropdown.classList.remove('show');
-          codeBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-      
-      // Close with Escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (codeDropdown.classList.contains('show')) {
-                codeDropdown.classList.remove('show');
-                codeBtn.setAttribute('aria-expanded', 'false');
-                codeBtn.focus();
-            }
-            if (codeModal.classList.contains('show')) closeModal();
-            if (playgroundModal.classList.contains('show')) closePlayground();
         }
       });
 
@@ -1145,8 +1023,8 @@ function initMountains(preserve = false) {
 
 // 3. Render with Depth & Color
 function animate() {
-  // Cached color from hexToRgb (outside loop)
-  const { r, g, b } = cachedMtnColor;
+  // Parse hex color
+  const { r, g, b } = hexToRgb(config.color);
 
   mountains.forEach((layer, index) => {
     // Parallax
