@@ -1,1074 +1,786 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="favicon.ico" />
-    <title>Gubala.dev - Link Hub</title>
-    <meta name="description" content="David Gubala's online development playground. Explore projects and resources by David Gubala." />
-    <meta name="keywords" content="David Gubala, DavidGubala, Gubala.dev, Gubala Development, development, programming, projects" />
-    <meta property="og:title" content="Gubala.dev - Link Hub" />
-    <meta property="og:description" content="David Gubala's online development playground. Explore projects and resources by David Gubala." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://gubala.dev" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <style>
-      :root {
-        --bg: #ffffff;
-        --bg-rgb: 255, 255, 255;
-        --text: #222;
-        --link: #0366d6;
-        --meta: #666;
-        --border: #e1e4e8;
-        --toggle-hover: #f6f8fa;
-      }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
+        <link rel="icon" href="favicon.ico" />
+        <title>David Gubala — Developer &amp; Builder</title>
+        <meta
+            name="description"
+            content="Full-stack developer building in public. Explore my projects and interactive playground."
+        />
+        <meta
+            name="keywords"
+            content="David Gubala, DavidGubala, Gubala.dev, Gubala Development, development, programming, projects"
+        />
+        <meta
+            property="og:title"
+            content="David Gubala — Developer &amp; Builder"
+        />
+        <meta
+            property="og:description"
+            content="Full-stack developer building in public."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://gubala.dev" />
+        <meta property="og:image" content="https://gubala.dev/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <canvas id="star-bg"></canvas>
 
-      /* Dark variables applied if system prefers dark (and not manually light) OR if manually dark */
-      @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) {
-          --bg: #0d1117;
-          --bg-rgb: 13, 17, 23;
-          --text: #c9d1d9;
-          --link: #58a6ff;
-          --meta: #8b949e;
-          --border: #30363d;
-          --toggle-hover: #21262d;
-        }
-      }
-
-      [data-theme="dark"] {
-        --bg: #0d1117;
-        --bg-rgb: 13, 17, 23;
-        --text: #c9d1d9;
-        --link: #58a6ff;
-        --meta: #8b949e;
-        --border: #30363d;
-        --toggle-hover: #21262d;
-      }
-
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-        line-height: 1.6;
-        max-width: 650px;
-        margin: 60px auto;
-        padding: 0 20px;
-        color: var(--text);
-        background: var(--bg);
-      }
-
-      main {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Apply backdrop-filter directly to text containers for better readability */
-      h1, p.tagline, nav, .admin-contact {
-        background: rgba(var(--bg-rgb), 0.7);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        padding: 5px 10px;
-        border-radius: 6px;
-        display: inline-block; /* Wraps tightly around content */
-      }
-
-      /* Specific tweak for nav to handle block layout */
-      nav {
-        display: block; 
-        margin-top: 10px;
-      }
-
-      /* Fallback for browsers without backdrop-filter */
-      @supports not (backdrop-filter: blur(4px)) {
-        h1, p.tagline, nav, .footer-controls, .admin-contact {
-          background: var(--bg);
-          opacity: 0.9;
-        }
-      }
-
-      h1 {
-        font-size: 2rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-      }
-
-      .tagline {
-        color: var(--meta);
-        margin-bottom: 2rem;
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      ul ul {
-        margin-left: 1rem;
-        margin-top: 0.5rem;
-        padding-left: 1rem;
-        border-left: 2px solid var(--border);
-      }
-
-      li {
-        margin: 0.5rem 0;
-      }
-
-      a {
-        color: var(--link);
-        text-decoration: none;
-        transition: opacity 0.2s ease;
-      }
-
-      a:hover {
-        text-decoration: underline;
-        opacity: 0.8;
-      }
-
-      .coming-soon {
-        color: var(--meta);
-      }
-
-      .coming-soon::after {
-        content: ' (coming soon)';
-        font-size: 0.9em;
-        opacity: 0.8;
-      }
-
-      hr {
-        margin: 2rem 0;
-        border: 0;
-        border-top: 1px solid var(--border);
-      }
-
-      .theme-toggle {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        background: transparent;
-        border: 0;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 6px;
-        color: var(--text);
-        opacity: 0.7;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 900; /* Above main content, below dropdowns and modals */
-      }
-
-      .theme-toggle:hover {
-        background: var(--toggle-hover);
-        opacity: 1;
-      }
-
-      .theme-icon {
-        width: 20px;
-        height: 20px;
-        fill: currentColor;
-      }
-
-      #star-bg {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        pointer-events: none;
-      }
-
-      /* Footer Controls */
-      .footer-controls {
-        position: relative; /* Ensure stacking context */
-        z-index: 20; /* Sit above main content (z-index: 1) so dropdowns overlap */
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 20px;
-        color: var(--meta);
-        font-size: 0.95rem;
-        background: rgba(var(--bg-rgb), 0.7);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        padding: 5px 10px;
-        border-radius: 6px;
-      }
-
-      .separator {
-        color: var(--border);
-      }
-      
-      /* Reuse Inline Button Styles */
-      .inline-btn {
-        background: none;
-        border: none;
-        padding: 0;
-        color: var(--link);
-        font-family: inherit;
-        font-size: inherit;
-        cursor: pointer;
-        text-decoration: none;
-        transition: opacity 0.2s ease;
-      }
-      
-      .inline-btn:hover:not(:disabled) {
-        text-decoration: underline;
-        opacity: 0.8;
-      }
-
-      .inline-btn:disabled {
-        cursor: default;
-        text-decoration: none;
-        color: var(--meta);
-      }
-
-      .dropdown {
-        position: relative;
-        display: inline-block;
-      }
-
-      .dropdown-menu {
-        position: absolute;
-        bottom: 100%; /* Open Upwards */
-        left: 0;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        padding: 5px 0;
-        min-width: 200px;
-        margin-bottom: 5px;
-        display: none;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-      }
-
-      .dropdown-menu.show {
-        display: block;
-        animation: fadeIn 0.2s ease;
-      }
-
-      .dropdown-item {
-        display: block;
-        width: 100%;
-        text-align: left;
-        padding: 8px 16px;
-        background: none;
-        border: none;
-        color: var(--text);
-        cursor: pointer;
-        font-size: 0.9rem;
-      }
-
-      .dropdown-item:hover {
-        background: var(--toggle-hover);
-      }
-
-      /* Modal */
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 2000;
-        backdrop-filter: blur(2px);
-      }
-
-      .modal-overlay.show {
-        display: flex;
-        animation: fadeIn 0.2s ease;
-      }
-
-      .modal-content {
-        background: var(--bg);
-        padding: 20px;
-        border-radius: 12px;
-        max-width: 600px;
-        width: 90%;
-        max-height: 80vh;
-        overflow-y: auto;
-        border: 1px solid var(--border);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        position: relative;
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-
-      .modal-title {
-        font-size: 1.2rem;
-        font-weight: 600;
-      }
-
-      .close-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--meta);
-      }
-
-      /* Code Blocks */
-      .code-section {
-        margin-bottom: 20px;
-      }
-
-      .code-header {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--meta);
-        margin-bottom: 5px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
-
-      pre {
-        background: var(--toggle-hover);
-        padding: 15px;
-        border-radius: 6px;
-        overflow-x: auto;
-        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-        font-size: 0.85rem;
-        border: 1px solid var(--border);
-        color: var(--text);
-        margin: 0;
-      }
-
-      /* Syntax Highlighting - Custom Theme */
-      .hl-keyword { color: #d73a49; }
-      .hl-string { color: #032f62; }
-      .hl-comment { color: #22863a; font-style: italic; } /* Green comments */
-      .hl-number { color: #005cc5; }
-      .hl-builtin { color: #6f42c1; }
-      .hl-tag { color: #22863a; }
-      .hl-attr { color: #6f42c1; } /* Purple attributes */
-
-      /* Syntax Highlighting - Dark Mode Overrides (VS Code-ish) */
-      @media (prefers-color-scheme: dark) {
-        :root:not([data-theme="light"]) .hl-keyword { color: #ff7b72; }
-        :root:not([data-theme="light"]) .hl-string { color: #a5d6ff; }
-        :root:not([data-theme="light"]) .hl-comment { color: #8b949e; }
-        :root:not([data-theme="light"]) .hl-number { color: #79c0ff; }
-        :root:not([data-theme="light"]) .hl-builtin { color: #d2a8ff; }
-        :root:not([data-theme="light"]) .hl-tag { color: #7ee787; }
-        :root:not([data-theme="light"]) .hl-attr { color: #d2a8ff; }
-      }
-
-      [data-theme="dark"] .hl-keyword { color: #ff7b72; }
-      [data-theme="dark"] .hl-string { color: #a5d6ff; }
-      [data-theme="dark"] .hl-comment { color: #8b949e; font-style: italic; }
-      [data-theme="dark"] .hl-number { color: #79c0ff; }
-      [data-theme="dark"] .hl-builtin { color: #d2a8ff; }
-      [data-theme="dark"] .hl-tag { color: #7ee787; }
-      [data-theme="dark"] .hl-attr { color: #d2a8ff; }
-
-      /* Playground UI */
-      .playground-controls {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      .control-group {
-        border: 1px solid var(--border);
-        padding: 15px;
-        border-radius: 8px;
-        background: var(--bg);
-      }
-
-      .group-title {
-        font-weight: 600;
-        margin-bottom: 10px;
-        font-size: 1rem;
-        color: var(--text);
-      }
-
-      .control-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .control-row label {
-        font-size: 0.9rem;
-        color: var(--meta);
-      }
-
-      input[type="range"] {
-        width: 50%;
-      }
-
-      .actions-row {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-      }
-
-      .btn {
-        background: var(--bg);
-        color: var(--text);
-        border: 1px solid var(--border);
-        padding: 8px 16px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-      }
-
-      .btn:hover {
-        background: var(--toggle-hover);
-      }
-
-      /* Playground Side Panel Overrides */
-      #playground-modal {
-        background: transparent; /* No dark overlay */
-        justify-content: flex-end; /* Align to right */
-        align-items: flex-start;
-        pointer-events: none; /* Let clicks pass through to page */
-      }
-
-      #playground-modal.show {
-        pointer-events: auto; /* Enable clicks when open? Actually, we want clicks OUTSIDE to close it, or pass through? 
-                                 If pass through, we can't click "close" by clicking outside. 
-                                 Standard side panel: click outside closes it. 
-                                 User said "add to page", implying interaction. 
-                                 Let's make the overlay transparent but clickable to close. 
-                                 OR, allow interaction with page and use X button to close. 
-                                 "add the model panel to the page instead of rendering it above" 
-                                 usually means non-modal. */
-        pointer-events: none; /* Wrapper doesn't block */
-      }
-
-      #playground-modal .modal-content {
-        pointer-events: auto; /* Content catches clicks */
-        height: 100%;
-        width: 320px;
-        max-width: 100%;
-        border-radius: 0;
-        border-left: 1px solid var(--border);
-        border-top: 0;
-        border-bottom: 0;
-        border-right: 0;
-        transform: translateX(100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        margin: 0; /* Reset centering margin */
-        box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-      }
-
-      #playground-modal.show .modal-content {
-        transform: translateX(0);
-        animation: none; /* Disable fade animation */
-      }
-
-      /* Mobile Responsive */
-      @media (max-width: 480px) {
-        /* Reduce margins and sizes for mobile */
-        body {
-          margin: 20px auto;
-          padding: 0 15px;
-        }
-
-        /* Adjust toggle position for mobile to fit tight corners */
-        .theme-toggle {
-          top: 10px;
-          right: 10px;
-        }
-
-        h1 {
-          font-size: 1.75rem;
-        }
-
-        .tagline {
-          margin-bottom: 1.5rem;
-        }
-
-        hr {
-          margin: 1.5rem 0;
-        }
-
-        li {
-          margin: 0.3rem 0;
-        }
-
-        .controls-container {
-          bottom: 10px;
-          right: 10px; /* Keep corner but tighter */
-          flex-direction: column-reverse; /* Stack buttons */
-          align-items: flex-end;
-        }
-        
-        .modal-content {
-          width: 95%;
-          padding: 15px;
-        }
-        
-        pre {
-          font-size: 0.75rem; /* Smaller code on mobile */
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="star-bg"></canvas>
-    
-    <!-- Code Modal -->
-    <div class="modal-overlay" id="code-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title" id="modal-title">Code Snippet</h3>
-          <button class="close-btn" onclick="closeModal()">×</button>
+        <!-- Code Modal -->
+        <div class="modal-overlay" id="code-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-title">Code Snippet</h3>
+                    <button class="close-btn" onclick="closeModal()">×</button>
+                </div>
+                <div id="code-content"></div>
+            </div>
         </div>
-        <div id="code-content"></div>
-      </div>
-    </div>
 
-    <div class="modal-overlay" id="playground-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 class="modal-title">Playground (Live Config)</h3>
-          <button class="close-btn" onclick="closePlayground()">×</button>
+        <div class="modal-overlay" id="playground-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Playground (Live Config)</h3>
+                    <button class="close-btn" onclick="closePlayground()">
+                        ×
+                    </button>
+                </div>
+                <div class="playground-controls">
+                    <div class="control-group">
+                        <div class="group-title">🌌 Starry Night</div>
+
+                        <div class="control-row">
+                            <label>Density (Lower is more)</label>
+                            <input
+                                type="range"
+                                id="star-density"
+                                min="1000"
+                                max="10000"
+                                step="500"
+                                value="4000"
+                                onchange="updateStarConfig()"
+                            />
+                        </div>
+
+                        <div class="control-row">
+                            <label>Rotation Speed</label>
+                            <input
+                                type="range"
+                                id="star-rotation"
+                                min="0"
+                                max="0.0005"
+                                step="0.00001"
+                                value="0.00005"
+                                onchange="updateStarConfig()"
+                            />
+                        </div>
+
+                        <div class="control-row">
+                            <label>Twinkle Speed</label>
+                            <input
+                                type="range"
+                                id="star-speed"
+                                min="0.0005"
+                                max="0.01"
+                                step="0.0005"
+                                value="0.002"
+                                onchange="updateStarConfig()"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="group-title">🏔️ Mountains</div>
+
+                        <div class="control-row">
+                            <label>Layers</label>
+                            <input
+                                type="range"
+                                id="mtn-layers"
+                                min="1"
+                                max="5"
+                                step="1"
+                                value="3"
+                                onchange="updateMountainConfig()"
+                            />
+                        </div>
+
+                        <div class="control-row">
+                            <label>Height Scale</label>
+                            <input
+                                type="range"
+                                id="mtn-height"
+                                min="50"
+                                max="300"
+                                step="10"
+                                value="100"
+                                onchange="updateMountainConfig()"
+                            />
+                        </div>
+
+                        <div class="control-row">
+                            <label>Depth Scale</label>
+                            <input
+                                type="range"
+                                id="mtn-variance"
+                                min="10"
+                                max="100"
+                                step="5"
+                                value="30"
+                                onchange="updateMountainConfig()"
+                            />
+                        </div>
+
+                        <div class="control-row">
+                            <label>Peak Count</label>
+                            <input
+                                type="range"
+                                id="mtn-peaks"
+                                min="3"
+                                max="20"
+                                step="1"
+                                value="6"
+                                onchange="updateMountainConfig()"
+                            />
+                        </div>
+
+                        <div class="control-row">
+                            <label>Base Color</label>
+                            <input
+                                type="color"
+                                id="mtn-color"
+                                value="#465064"
+                                onchange="updateMountainConfig()"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="actions-row">
+                        <button class="btn" onclick="regenerate()">
+                            🔄 Regenerate
+                        </button>
+                        <button class="btn" onclick="resetDefaults()">
+                            Revert Defaults
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="playground-controls">
-          
-          <div class="control-group">
-            <div class="group-title">🌌 Starry Night</div>
-            
-            <div class="control-row">
-              <label>Density (Lower is more)</label>
-              <input type="range" id="star-density" min="1000" max="10000" step="500" value="4000" onchange="updateStarConfig()">
-            </div>
-            
-            <div class="control-row">
-              <label>Rotation Speed</label>
-              <input type="range" id="star-rotation" min="0" max="0.0005" step="0.00001" value="0.00005" onchange="updateStarConfig()">
-            </div>
 
-            <div class="control-row">
-              <label>Twinkle Speed</label>
-              <input type="range" id="star-speed" min="0.0005" max="0.01" step="0.0005" value="0.002" onchange="updateStarConfig()">
-            </div>
-          </div>
+        <button
+            id="theme-toggle"
+            class="theme-toggle"
+            aria-label="Toggle dark mode"
+        >
+            <!-- Sun Icon (shown in dark mode) -->
+            <svg
+                class="theme-icon sun-icon"
+                viewBox="0 0 24 24"
+                style="display: none"
+            >
+                <path
+                    d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2V4h.01M12 20v-3.01M4 12H4.01M7.757 7.757l-2.12-2.12M18.363 18.364l-2.12-2.12M20 12h-3.01M16.243 7.757l2.12-2.12M5.637 18.364l2.12-2.12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+            <!-- Moon Icon (shown in light mode) -->
+            <svg class="theme-icon moon-icon" viewBox="0 0 24 24">
+                <path
+                    d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </button>
 
-          <div class="control-group">
-            <div class="group-title">🏔️ Mountains</div>
-            
-            <div class="control-row">
-              <label>Layers</label>
-              <input type="range" id="mtn-layers" min="1" max="5" step="1" value="3" onchange="updateMountainConfig()">
-            </div>
-            
-            <div class="control-row">
-              <label>Height Scale</label>
-              <input type="range" id="mtn-height" min="50" max="300" step="10" value="100" onchange="updateMountainConfig()">
-            </div>
+        <h1>David Gubala</h1>
+        <p class="tagline">
+            Full-stack developer building in public. This is my online
+            playground.
+        </p>
 
-            <div class="control-row">
-              <label>Depth Scale</label>
-              <input type="range" id="mtn-variance" min="10" max="100" step="5" value="30" onchange="updateMountainConfig()">
-            </div>
-
-            <div class="control-row">
-              <label>Peak Count</label>
-              <input type="range" id="mtn-peaks" min="3" max="20" step="1" value="6" onchange="updateMountainConfig()">
-            </div>
-
-            <div class="control-row">
-              <label>Base Color</label>
-              <input type="color" id="mtn-color" value="#465064" onchange="updateMountainConfig()">
-            </div>
-          </div>
-
-          <div class="actions-row">
-            <button class="btn" onclick="regenerate()">🔄 Regenerate</button>
-            <button class="btn" onclick="resetDefaults()">Revert Defaults</button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-      <!-- Sun Icon (shown in dark mode) -->
-      <svg class="theme-icon sun-icon" viewBox="0 0 24 24" style="display: none;">
-        <path d="M12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0-2V4h.01M12 20v-3.01M4 12H4.01M7.757 7.757l-2.12-2.12M18.363 18.364l-2.12-2.12M20 12h-3.01M16.243 7.757l2.12-2.12M5.637 18.364l2.12-2.12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <!-- Moon Icon (shown in light mode) -->
-      <svg class="theme-icon moon-icon" viewBox="0 0 24 24">
-        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
-    <main>
-      <h1>Gubala.dev</h1>
-      <p class="tagline">An online development playground.</p>
-      
-      <nav>
-        <ul>
-          <li>
-            <a href="https://david.gubala.dev">david.gubala.dev</a>
-            <ul>
-              <li>
-                <a href="https://caniridemymotorcycle.com">caniridemymotorcycle.com</a>
-              </li>
-              <li>
-                <a href="https://mystockwatchlist.com">mystockwatchlist.com</a>
-              </li>
-              <li>
-                <a href="https://sitespeedlog.gubala.dev/">sitespeedlog.gubala.dev</a>
-              </li>
-              <li>
-                <a href="https://log.gubala.dev">log.gubala.dev</a>
-              </li>
-              <li>
-                <span class="coming-soon">invoiceapp.gubala.dev</span>
-              </li>
-              <li>
-                <span class="coming-soon">agent07.gubala.dev</span>
-              </li>
-            </ul>
-          </li>
+        <ul class="projects-grid">
+            <li class="project-category">
+                <strong>David Gubala</strong>
+                <ul>
+                    <li>
+                        <a href="https://david.gubala.dev">david.gubala.dev</a>
+                        <span class="project-desc">Online Resume.</span>
+                    </li>
+                </ul>
+            </li>
+            <li class="project-category">
+                <strong>Professional Solutions</strong>
+                <ul>
+                    <li>
+                        <a href="https://poparse.gubala.dev"
+                            >poparse.gubala.dev</a
+                        >
+                        <span class="tag ai-tag">AI-Powered</span>
+                        <span class="project-desc"
+                            >Purchase Order Processing And Reporting Software
+                            Engine.</span
+                        >
+                    </li>
+                </ul>
+            </li>
+            <li class="project-category">
+                <strong>Live Projects</strong>
+                <ul>
+                    <li>
+                        <a href="https://caniridemymotorcycle.com"
+                            >caniridemymotorcycle.com</a
+                        >
+                        <span class="project-desc"
+                            >Weather &amp; road condition checker for
+                            motorcyclists.</span
+                        >
+                    </li>
+                    <li>
+                        <a href="https://mystockwatchlist.com"
+                            >mystockwatchlist.com</a
+                        >
+                        <span class="project-desc"
+                            >Personal stock watchlist and market tracking
+                            dashboard.</span
+                        >
+                    </li>
+                    <li>
+                        <a href="https://sitespeedlog.gubala.dev/"
+                            >sitespeedlog.gubala.dev</a
+                        >
+                        <span class="project-desc"
+                            >Website performance monitoring and speed logging
+                            tool.</span
+                        >
+                    </li>
+                    <li>
+                        <a href="https://log.gubala.dev">log.gubala.dev</a>
+                        <span class="project-desc">Game Dev log</span>
+                    </li>
+                </ul>
+            </li>
+            <li class="project-category coming-soon-category">
+                <strong>In Development</strong>
+                <ul>
+                    <li>
+                        <span class="coming-soon">invoiceapp.gubala.dev</span>
+                        <span class="project-desc"
+                            >Simple invoicing tool for freelancers.</span
+                        >
+                    </li>
+                    <li>
+                        <span class="coming-soon">agent07.gubala.dev</span>
+                        <span class="project-desc"
+                            >AI agent experiment and automation sandbox.</span
+                        >
+                    </li>
+                </ul>
+            </li>
         </ul>
-      </nav>
-    </main>
 
-    <hr>
+        <hr />
 
-    <footer class="footer-controls">
-      <span class="dropdown">
-        <button class="inline-btn" id="code-btn" aria-haspopup="true" aria-expanded="false">Cool Source ▼</button>
-        <div class="dropdown-menu" id="code-dropdown" role="menu">
-          <button class="dropdown-item" role="menuitem" onclick="showCode('starry')">Starry Night Logic</button>
-          <button class="dropdown-item" role="menuitem" onclick="showCode('mountains')">Mountain Parallax Logic</button>
+        <div class="footer-controls">
+            <span class="dropdown">
+                <button class="inline-btn" id="code-btn">Cool Source ▼</button>
+                <div class="dropdown-menu" id="code-dropdown">
+                    <button class="dropdown-item" onclick="showCode('starry')">
+                        Starry Night Logic
+                    </button>
+                    <button
+                        class="dropdown-item"
+                        onclick="showCode('mountains')"
+                    >
+                        Mountain Parallax Logic
+                    </button>
+                </div>
+            </span>
+
+            <span class="separator">•</span>
+
+            <button class="inline-btn" onclick="openPlayground()">
+                Playground
+            </button>
         </div>
-      </span>
-      
-      <span class="separator">•</span>
-      
-      <button class="inline-btn" onclick="openPlayground()">Playground</button>
-    </footer>
 
-    <p class="admin-contact"><strong>Admin:</strong> <a href="mailto:david@gubala.dev">david@gubala.dev</a></p>
+        <div class="contact-section">
+            <a href="mailto:david@gubala.dev" class="contact-btn"
+                >Get in Touch</a
+            >
+            <span class="contact-email">david@gubala.dev</span>
+        </div>
 
-    <script>
-      // Theme Toggle Logic
-      const toggleBtn = document.getElementById('theme-toggle');
-      const sunIcon = document.querySelector('.sun-icon');
-      const moonIcon = document.querySelector('.moon-icon');
-      const html = document.documentElement;
+        <script>
+            // Theme Toggle Logic
+            const toggleBtn = document.getElementById("theme-toggle");
+            const sunIcon = document.querySelector(".sun-icon");
+            const moonIcon = document.querySelector(".moon-icon");
+            const html = document.documentElement;
 
-      function updateIcons(theme) {
-        if (theme === 'dark') {
-          sunIcon.style.display = 'block';
-          moonIcon.style.display = 'none';
-        } else {
-          sunIcon.style.display = 'none';
-          moonIcon.style.display = 'block';
-        }
-      }
-
-      // Initialize
-      const savedTheme = localStorage.getItem('theme');
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      if (savedTheme) {
-        html.setAttribute('data-theme', savedTheme);
-        updateIcons(savedTheme);
-      } else if (systemDark) {
-        // If system is dark, we don't set attribute (CSS handles it), but update icon
-        updateIcons('dark');
-      }
-
-      toggleBtn.addEventListener('click', () => {
-        const currentTheme = html.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateIcons(newTheme);
-      });
-
-      // --- Configuration & State ---
-      const defaultConfig = {
-        stars: {
-          density: 4000, // Lower is more stars
-          rotation: 0.00005,
-          speed: 0.002
-        },
-        mountains: {
-          layers: 3,
-          height: 100,
-          variance: 30,
-          peaks: 6,
-          color: '#465064'
-        }
-      };
-
-      // Active config (starts as copy of default)
-      let config = JSON.parse(JSON.stringify(defaultConfig));
-
-      // Helper to parse color once
-      function parseHexColor(hex) {
-        hex = hex || '#465064';
-        return {
-            r: parseInt(hex.slice(1, 3), 16),
-            g: parseInt(hex.slice(3, 5), 16),
-            b: parseInt(hex.slice(5, 7), 16)
-        };
-      }
-      
-      // Cached color values to avoid parsing in loop
-      let cachedMtnColor = parseHexColor(config.mountains.color);
-
-      // Starry Background & Mountains Logic
-      const starCanvas = document.getElementById('star-bg');
-      const starCtx = starCanvas.getContext('2d');
-      let stars = [];
-      let mountains = [];
-      let mouseXRatio = 0.5; 
-      let rotation = 0;
-
-      function resizeStarCanvas() {
-        const dpr = window.devicePixelRatio || 1;
-        starCanvas.width = window.innerWidth * dpr;
-        starCanvas.height = window.innerHeight * dpr;
-        starCtx.scale(dpr, dpr);
-        starCanvas.style.width = window.innerWidth + 'px';
-        starCanvas.style.height = window.innerHeight + 'px';
-        initStars();
-        initMountains();
-      }
-
-      function initMountains(preserve = false) {
-        const layers = parseInt(config.mountains.layers);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        
-        // Preserve existing data only if requested and available
-        const oldMountains = preserve ? mountains : [];
-        const oldLayers = oldMountains.length;
-        mountains = [];
-        
-        for (let l = 0; l < layers; l++) {
-          let points = [];
-          const peakCount = parseInt(config.mountains.peaks) + (l * 4); 
-          const step = width / peakCount;
-          // Back layers (l=0) are higher up (further), Front layers (l=max) are lower down (closer)
-          const baseY = height - ((layers - 1 - l) * 50) - 100;
-
-          // Align layers to the FRONT to preserve depth perception
-          // New Front (l=layers-1) should match Old Front (oldL=oldLayers-1)
-          const oldL = l - (layers - oldLayers);
-
-          // Try to reuse existing layer if valid and alignment matches
-          if (preserve && oldL >= 0 && oldL < oldLayers && oldMountains[oldL]) {
-             points = oldMountains[oldL].points.map(p => {
-                // Morph Y position to new layer/baseY settings
-                // This preserves the shape/noise but slides it to the correct depth plane
-                if (p.type === 'peak') {
-                   const variance = p.noise * (parseInt(config.mountains.height) + ((layers - 1 - l) * parseInt(config.mountains.variance) * 1.2));
-                   return { ...p, y: baseY - variance };
-                } else if (p.type === 'base') {
-                   return { ...p, y: baseY };
-                } else if (p.type === 'anchor') {
-                   return { ...p, y: height };
+            function updateIcons(theme) {
+                if (theme === "dark") {
+                    sunIcon.style.display = "block";
+                    moonIcon.style.display = "none";
+                } else {
+                    sunIcon.style.display = "none";
+                    moonIcon.style.display = "block";
                 }
-                return p;
-             });
-          } else {
-             // Generate new layer
-             points.push({x: -100, y: height, type: 'anchor'}); 
-             points.push({x: -100, y: baseY, type: 'base'}); 
-             
-             for (let i = 0; i <= peakCount + 2; i++) {
-               const noise = Math.random();
-               const variance = noise * (parseInt(config.mountains.height) + ((layers - 1 - l) * parseInt(config.mountains.variance) * 1.2));
-               
-               points.push({
-                 x: (i * step) - 50,
-                 y: baseY - variance,
-                 type: 'peak',
-                 noise: noise 
-               });
-             }
-             
-             points.push({x: width + 100, y: height, type: 'anchor'});
-          }
-          
-          mountains.push({ points: points, layer: l });
-        }
-      }
-
-      function initStars() {
-        stars = [];
-        const maxDim = Math.max(window.innerWidth, window.innerHeight) * 1.5;
-        // Use config density
-        const count = Math.floor((maxDim * maxDim) / parseInt(config.stars.density)); 
-        
-        for (let i = 0; i < count; i++) {
-          stars.push({
-            x: (Math.random() - 0.5) * maxDim,
-            y: (Math.random() - 0.5) * maxDim,
-            radius: Math.random() * 1.2 + 0.5,
-            alpha: Math.random(),
-            // Use config speed base
-            speed: (Math.random() * parseFloat(config.stars.speed)) + (parseFloat(config.stars.speed) / 2), 
-            direction: Math.random() > 0.5 ? 1 : -1
-          });
-        }
-      }
-
-      function animateStars() {
-        const dpr = window.devicePixelRatio || 1;
-        starCtx.clearRect(0, 0, starCanvas.width / dpr, starCanvas.height / dpr);
-        
-        const computedStyle = getComputedStyle(document.documentElement);
-        const isDark = computedStyle.getPropertyValue('--bg').trim() === '#0d1117' || document.documentElement.getAttribute('data-theme') === 'dark';
-        const starColor = isDark ? '255, 255, 255' : '30, 30, 30';
-
-        // --- Stars ---
-        const cx = window.innerWidth * 0.2;
-        const cy = window.innerHeight * 0.8;
-
-        rotation += parseFloat(config.stars.rotation);
-
-        starCtx.save();
-        starCtx.translate(cx, cy);
-        starCtx.rotate(rotation);
-
-        stars.forEach(star => {
-          star.alpha += star.speed * star.direction;
-          if (star.alpha <= 0.1 || star.alpha >= 0.8) star.direction *= -1;
-
-          starCtx.beginPath();
-          starCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          starCtx.fillStyle = `rgba(${starColor}, ${star.alpha * (isDark ? 0.8 : 0.3)})`;
-          starCtx.fill();
-        });
-        starCtx.restore();
-
-        // --- Mountains ---
-        // Use cached color
-        const { r: rBase, g: gBase, b: bBase } = cachedMtnColor;
-
-        mountains.forEach((mountain, index) => {
-          const parallaxX = (mouseXRatio - 0.5) * (10 + index * 20);
-          
-          starCtx.beginPath();
-          const pts = mountain.points;
-          starCtx.moveTo(pts[0].x + parallaxX, pts[0].y);
-          
-          for (let i = 1; i < pts.length; i++) {
-             starCtx.lineTo(pts[i].x + parallaxX, pts[i].y);
-          }
-          
-          // Gradient depth effect: Back layers (index 0) are lighter, Front (index max) are base color
-          const depth = mountains.length - 1 - index; 
-          const lighten = depth * 20; 
-          
-          const r = Math.min(255, rBase + lighten);
-          const g = Math.min(255, gBase + lighten);
-          const b = Math.min(255, bBase + lighten);
-          
-          // High opacity to block stars, slight fade for distance
-          const opacity = 0.95 - (depth * 0.05);
-
-          starCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-          starCtx.fill();
-        });
-        
-        requestAnimationFrame(animateStars);
-      }
-
-      // Debounce helper
-      function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-          const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-          };
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-        };
-      }
-
-      const debouncedResize = debounce(resizeStarCanvas, 200);
-      window.addEventListener('resize', debouncedResize);
-      document.addEventListener('mousemove', (e) => {
-         mouseXRatio = e.clientX / window.innerWidth;
-      });
-      
-      resizeStarCanvas();
-      animateStars();
-
-      // --- Playground Logic ---
-      const playgroundModal = document.getElementById('playground-modal');
-
-      function openPlayground() {
-        // Sync inputs with current config
-        document.getElementById('star-density').value = config.stars.density;
-        document.getElementById('star-rotation').value = config.stars.rotation;
-        document.getElementById('star-speed').value = config.stars.speed;
-        
-        document.getElementById('mtn-layers').value = config.mountains.layers;
-        document.getElementById('mtn-height').value = config.mountains.height;
-        document.getElementById('mtn-variance').value = config.mountains.variance;
-        document.getElementById('mtn-peaks').value = config.mountains.peaks;
-        document.getElementById('mtn-color').value = config.mountains.color || '#465064';
-
-        playgroundModal.classList.add('show');
-      }
-
-      function closePlayground() {
-        playgroundModal.classList.remove('show');
-      }
-
-      // Close on outside click
-      playgroundModal.addEventListener('click', (e) => {
-        if (e.target === playgroundModal) closePlayground();
-      });
-
-      function updateStarConfig() {
-        const newDensity = document.getElementById('star-density').value;
-        const newRotation = document.getElementById('star-rotation').value;
-        const newSpeed = document.getElementById('star-speed').value;
-        
-        // Check if we need to re-generate stars (Density changed)
-        // Convert to string for comparison to avoid type mismatch with input value
-        if (newDensity !== config.stars.density.toString()) {
-           config.stars.density = newDensity;
-           config.stars.rotation = newRotation;
-           config.stars.speed = newSpeed;
-           initStars(); 
-        } else {
-           // Update config for live animation usage
-           config.stars.rotation = newRotation;
-           config.stars.speed = newSpeed;
-           
-           // Update speed of existing stars in-place without resetting position
-           const baseSpeed = parseFloat(newSpeed);
-           stars.forEach(star => {
-              star.speed = (Math.random() * baseSpeed) + (baseSpeed / 2);
-           });
-        }
-      }
-
-      function updateMountainConfig() {
-        const newLayers = document.getElementById('mtn-layers').value;
-        const newHeight = document.getElementById('mtn-height').value;
-        const newVariance = document.getElementById('mtn-variance').value;
-        const newPeaks = document.getElementById('mtn-peaks').value;
-        const newColor = document.getElementById('mtn-color').value;
-
-        // Update cached color if changed
-        if (newColor !== config.mountains.color) {
-             cachedMtnColor = parseHexColor(newColor);
-        }
-
-        // Check for structural change (Layers or Peaks)
-        if (newLayers !== config.mountains.layers.toString() || newPeaks !== config.mountains.peaks.toString()) {
-           // If peaks changed, we must regenerate structure (false).
-           // If only layers changed, we preserve and shift (true).
-           const preserve = newPeaks === config.mountains.peaks.toString();
-           
-           config.mountains.layers = newLayers;
-           config.mountains.height = newHeight;
-           config.mountains.variance = newVariance;
-           config.mountains.peaks = newPeaks;
-           config.mountains.color = newColor;
-           
-           initMountains(preserve);
-        } else {
-           // Morph existing mountains
-           config.mountains.height = newHeight;
-           config.mountains.variance = newVariance;
-           config.mountains.color = newColor;
-           initMountains(true);
-        }
-      }
-
-      function regenerate() {
-        initStars();
-        initMountains();
-      }
-
-      function resetDefaults() {
-        config = JSON.parse(JSON.stringify(defaultConfig));
-        
-        // Reset cached color
-        cachedMtnColor = parseHexColor(config.mountains.color);
-
-        // Reset UI inputs
-        document.getElementById('star-density').value = config.stars.density;
-        document.getElementById('star-rotation').value = config.stars.rotation;
-        document.getElementById('star-speed').value = config.stars.speed;
-        document.getElementById('mtn-layers').value = config.mountains.layers;
-        document.getElementById('mtn-height').value = config.mountains.height;
-        document.getElementById('mtn-variance').value = config.mountains.variance;
-        document.getElementById('mtn-peaks').value = config.mountains.peaks;
-        document.getElementById('mtn-color').value = config.mountains.color;
-        
-        regenerate();
-      }
-
-      // --- UI Documentation Logic ---
-      const codeBtn = document.getElementById('code-btn');
-      const codeDropdown = document.getElementById('code-dropdown');
-      const codeModal = document.getElementById('code-modal');
-      const codeBlock = document.getElementById('code-block');
-      const modalTitle = document.getElementById('modal-title');
-
-      // Toggle Dropdown
-      codeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isShown = codeDropdown.classList.toggle('show');
-        codeBtn.setAttribute('aria-expanded', isShown);
-      });
-
-      // Close dropdown when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!codeBtn.contains(e.target) && !codeDropdown.contains(e.target)) {
-          codeDropdown.classList.remove('show');
-          codeBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
-      
-      // Close with Escape key
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            if (codeDropdown.classList.contains('show')) {
-                codeDropdown.classList.remove('show');
-                codeBtn.setAttribute('aria-expanded', 'false');
-                codeBtn.focus();
             }
-            if (codeModal.classList.contains('show')) closeModal();
-            if (playgroundModal.classList.contains('show')) closePlayground();
-        }
-      });
 
-      // Code Snippets Data
-      const snippets = {
-        starry: {
-          html: `<canvas id="star-bg"></canvas>`,
-          css: `#star-bg {
+            // Initialize
+            const savedTheme = localStorage.getItem("theme");
+            const systemDark = window.matchMedia(
+                "(prefers-color-scheme: dark)",
+            ).matches;
+
+            if (savedTheme) {
+                html.setAttribute("data-theme", savedTheme);
+                updateIcons(savedTheme);
+            } else {
+                const initialTheme = systemDark ? "dark" : "light";
+                html.setAttribute("data-theme", initialTheme);
+                updateIcons(initialTheme);
+            }
+
+            // Listen for OS theme changes (only when no manual override)
+            window
+                .matchMedia("(prefers-color-scheme: dark)")
+                .addEventListener("change", (e) => {
+                    if (!localStorage.getItem("theme")) {
+                        const newTheme = e.matches ? "dark" : "light";
+                        html.setAttribute("data-theme", newTheme);
+                        updateIcons(newTheme);
+                    }
+                });
+
+            toggleBtn.addEventListener("click", () => {
+                const currentTheme =
+                    html.getAttribute("data-theme") ||
+                    (window.matchMedia("(prefers-color-scheme: dark)").matches
+                        ? "dark"
+                        : "light");
+                const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+                html.setAttribute("data-theme", newTheme);
+                localStorage.setItem("theme", newTheme);
+                updateIcons(newTheme);
+            });
+
+            // --- Configuration & State ---
+            const defaultConfig = {
+                stars: {
+                    density: 4000, // Lower is more stars
+                    rotation: 0.00005,
+                    speed: 0.002,
+                },
+                mountains: {
+                    layers: 3,
+                    height: 100,
+                    variance: 30,
+                    peaks: 6,
+                    color: "#465064",
+                },
+            };
+
+            // Active config (starts as copy of default)
+            let config = JSON.parse(JSON.stringify(defaultConfig));
+
+            // Starry Background & Mountains Logic
+            const starCanvas = document.getElementById("star-bg");
+            const starCtx = starCanvas.getContext("2d");
+            let stars = [];
+            let mountains = [];
+            let mouseXRatio = 0.5;
+            let rotation = 0;
+
+            function resizeStarCanvas() {
+                const dpr = window.devicePixelRatio || 1;
+                starCanvas.width = window.innerWidth * dpr;
+                starCanvas.height = window.innerHeight * dpr;
+                starCtx.scale(dpr, dpr);
+                starCanvas.style.width = window.innerWidth + "px";
+                starCanvas.style.height = window.innerHeight + "px";
+                initStars();
+                initMountains();
+            }
+
+            function initMountains(preserve = false) {
+                const layers = parseInt(config.mountains.layers);
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+
+                // Preserve existing data only if requested and available
+                const oldMountains = preserve ? mountains : [];
+                const oldLayers = oldMountains.length;
+                mountains = [];
+
+                for (let l = 0; l < layers; l++) {
+                    let points = [];
+                    const peakCount = parseInt(config.mountains.peaks) + l * 4;
+                    const step = width / peakCount;
+                    // Back layers (l=0) are higher up (further), Front layers (l=max) are lower down (closer)
+                    const baseY = height - (layers - 1 - l) * 50 - 100;
+
+                    // Align layers to the FRONT to preserve depth perception
+                    // New Front (l=layers-1) should match Old Front (oldL=oldLayers-1)
+                    const oldL = l - (layers - oldLayers);
+
+                    // Try to reuse existing layer if valid and alignment matches
+                    if (
+                        preserve &&
+                        oldL >= 0 &&
+                        oldL < oldLayers &&
+                        oldMountains[oldL]
+                    ) {
+                        points = oldMountains[oldL].points.map((p) => {
+                            // Morph Y position to new layer/baseY settings
+                            // This preserves the shape/noise but slides it to the correct depth plane
+                            if (p.type === "peak") {
+                                const variance =
+                                    p.noise *
+                                    (parseInt(config.mountains.height) +
+                                        (layers - 1 - l) *
+                                            parseInt(
+                                                config.mountains.variance,
+                                            ) *
+                                            1.2);
+                                return { ...p, y: baseY - variance };
+                            } else if (p.type === "base") {
+                                return { ...p, y: baseY };
+                            } else if (p.type === "anchor") {
+                                return { ...p, y: height };
+                            }
+                            return p;
+                        });
+                    } else {
+                        // Generate new layer
+                        points.push({ x: -100, y: height, type: "anchor" });
+                        points.push({ x: -100, y: baseY, type: "base" });
+
+                        for (let i = 0; i <= peakCount + 2; i++) {
+                            const noise = Math.random();
+                            const variance =
+                                noise *
+                                (parseInt(config.mountains.height) +
+                                    (layers - 1 - l) *
+                                        parseInt(config.mountains.variance) *
+                                        1.2);
+
+                            points.push({
+                                x: i * step - 50,
+                                y: baseY - variance,
+                                type: "peak",
+                                noise: noise,
+                            });
+                        }
+
+                        points.push({
+                            x: width + 100,
+                            y: height,
+                            type: "anchor",
+                        });
+                    }
+
+                    mountains.push({ points: points, layer: l });
+                }
+            }
+
+            function initStars() {
+                stars = [];
+                const maxDim =
+                    Math.max(window.innerWidth, window.innerHeight) * 1.5;
+                // Use config density
+                const count = Math.floor(
+                    (maxDim * maxDim) / parseInt(config.stars.density),
+                );
+
+                for (let i = 0; i < count; i++) {
+                    stars.push({
+                        x: (Math.random() - 0.5) * maxDim,
+                        y: (Math.random() - 0.5) * maxDim,
+                        radius: Math.random() * 1.2 + 0.5,
+                        alpha: Math.random(),
+                        // Use config speed base
+                        speed:
+                            Math.random() * parseFloat(config.stars.speed) +
+                            parseFloat(config.stars.speed) / 2,
+                        direction: Math.random() > 0.5 ? 1 : -1,
+                    });
+                }
+            }
+
+            function animateStars() {
+                const dpr = window.devicePixelRatio || 1;
+                starCtx.clearRect(
+                    0,
+                    0,
+                    starCanvas.width / dpr,
+                    starCanvas.height / dpr,
+                );
+
+                const isDark =
+                    document.documentElement.getAttribute("data-theme") ===
+                        "dark" ||
+                    (!document.documentElement.getAttribute("data-theme") &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches);
+                const starColor = isDark ? "255, 255, 255" : "30, 30, 30";
+
+                // --- Stars ---
+                const cx = window.innerWidth * 0.2;
+                const cy = window.innerHeight * 0.8;
+
+                rotation += parseFloat(config.stars.rotation);
+
+                starCtx.save();
+                starCtx.translate(cx, cy);
+                starCtx.rotate(rotation);
+
+                stars.forEach((star) => {
+                    star.alpha += star.speed * star.direction;
+                    if (star.alpha <= 0.1 || star.alpha >= 0.8)
+                        star.direction *= -1;
+
+                    starCtx.beginPath();
+                    starCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    starCtx.fillStyle = `rgba(${starColor}, ${star.alpha * (isDark ? 0.8 : 0.3)})`;
+                    starCtx.fill();
+                });
+                starCtx.restore();
+
+                // --- Mountains ---
+                // Parse config color
+                const hex = config.mountains.color || "#465064";
+                const rBase = parseInt(hex.slice(1, 3), 16);
+                const gBase = parseInt(hex.slice(3, 5), 16);
+                const bBase = parseInt(hex.slice(5, 7), 16);
+
+                mountains.forEach((mountain, index) => {
+                    const parallaxX = (mouseXRatio - 0.5) * (10 + index * 20);
+
+                    starCtx.beginPath();
+                    const pts = mountain.points;
+                    starCtx.moveTo(pts[0].x + parallaxX, pts[0].y);
+
+                    for (let i = 1; i < pts.length; i++) {
+                        starCtx.lineTo(pts[i].x + parallaxX, pts[i].y);
+                    }
+
+                    // Gradient depth effect: Back layers (index 0) are lighter, Front (index max) are base color
+                    const depth = mountains.length - 1 - index;
+                    const lighten = depth * 20;
+
+                    const r = Math.min(255, rBase + lighten);
+                    const g = Math.min(255, gBase + lighten);
+                    const b = Math.min(255, bBase + lighten);
+
+                    // High opacity to block stars, slight fade for distance
+                    const opacity = 0.95 - depth * 0.05;
+
+                    starCtx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+                    starCtx.fill();
+                });
+
+                animationId = requestAnimationFrame(animateStars);
+            }
+
+            let animationId;
+
+            function handleVisibilityChange() {
+                if (document.hidden) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                } else {
+                    animationId = requestAnimationFrame(animateStars);
+                }
+            }
+
+            window.addEventListener("resize", resizeStarCanvas);
+            document.addEventListener("mousemove", (e) => {
+                mouseXRatio = e.clientX / window.innerWidth;
+            });
+
+            resizeStarCanvas();
+            animationId = requestAnimationFrame(animateStars);
+            document.addEventListener(
+                "visibilitychange",
+                handleVisibilityChange,
+            );
+
+            // --- Playground Logic ---
+            const playgroundModal = document.getElementById("playground-modal");
+
+            function openPlayground() {
+                // Sync inputs with current config
+                document.getElementById("star-density").value =
+                    config.stars.density;
+                document.getElementById("star-rotation").value =
+                    config.stars.rotation;
+                document.getElementById("star-speed").value =
+                    config.stars.speed;
+
+                document.getElementById("mtn-layers").value =
+                    config.mountains.layers;
+                document.getElementById("mtn-height").value =
+                    config.mountains.height;
+                document.getElementById("mtn-variance").value =
+                    config.mountains.variance;
+                document.getElementById("mtn-peaks").value =
+                    config.mountains.peaks;
+                document.getElementById("mtn-color").value =
+                    config.mountains.color || "#465064";
+
+                playgroundModal.classList.add("show");
+            }
+
+            function closePlayground() {
+                playgroundModal.classList.remove("show");
+            }
+
+            // Close on outside click
+            playgroundModal.addEventListener("click", (e) => {
+                if (e.target === playgroundModal) closePlayground();
+            });
+
+            function updateStarConfig() {
+                const newDensity =
+                    document.getElementById("star-density").value;
+                const newRotation =
+                    document.getElementById("star-rotation").value;
+                const newSpeed = document.getElementById("star-speed").value;
+
+                // Check if we need to re-generate stars (Density changed)
+                // Convert to string for comparison to avoid type mismatch with input value
+                if (newDensity !== config.stars.density.toString()) {
+                    config.stars.density = newDensity;
+                    config.stars.rotation = newRotation;
+                    config.stars.speed = newSpeed;
+                    initStars();
+                } else {
+                    // Update config for live animation usage
+                    config.stars.rotation = newRotation;
+                    config.stars.speed = newSpeed;
+
+                    // Update speed of existing stars in-place without resetting position
+                    const baseSpeed = parseFloat(newSpeed);
+                    stars.forEach((star) => {
+                        star.speed = Math.random() * baseSpeed + baseSpeed / 2;
+                    });
+                }
+            }
+
+            function updateMountainConfig() {
+                const newLayers = document.getElementById("mtn-layers").value;
+                const newHeight = document.getElementById("mtn-height").value;
+                const newVariance =
+                    document.getElementById("mtn-variance").value;
+                const newPeaks = document.getElementById("mtn-peaks").value;
+                const newColor = document.getElementById("mtn-color").value;
+
+                // Check for structural change (Layers or Peaks)
+                if (
+                    newLayers !== config.mountains.layers.toString() ||
+                    newPeaks !== config.mountains.peaks.toString()
+                ) {
+                    // If peaks changed, we must regenerate structure (false).
+                    // If only layers changed, we preserve and shift (true).
+                    const preserve =
+                        newPeaks === config.mountains.peaks.toString();
+
+                    config.mountains.layers = newLayers;
+                    config.mountains.height = newHeight;
+                    config.mountains.variance = newVariance;
+                    config.mountains.peaks = newPeaks;
+                    config.mountains.color = newColor;
+
+                    initMountains(preserve);
+                } else {
+                    // Morph existing mountains
+                    config.mountains.height = newHeight;
+                    config.mountains.variance = newVariance;
+                    config.mountains.color = newColor;
+                    initMountains(true);
+                }
+            }
+
+            function regenerate() {
+                initStars();
+                initMountains();
+            }
+
+            function resetDefaults() {
+                config = JSON.parse(JSON.stringify(defaultConfig));
+
+                // Reset UI inputs
+                document.getElementById("star-density").value =
+                    config.stars.density;
+                document.getElementById("star-rotation").value =
+                    config.stars.rotation;
+                document.getElementById("star-speed").value =
+                    config.stars.speed;
+                document.getElementById("mtn-layers").value =
+                    config.mountains.layers;
+                document.getElementById("mtn-height").value =
+                    config.mountains.height;
+                document.getElementById("mtn-variance").value =
+                    config.mountains.variance;
+                document.getElementById("mtn-peaks").value =
+                    config.mountains.peaks;
+                document.getElementById("mtn-color").value =
+                    config.mountains.color;
+
+                regenerate();
+            }
+
+            // --- UI Documentation Logic ---
+            const codeBtn = document.getElementById("code-btn");
+            const codeDropdown = document.getElementById("code-dropdown");
+            const codeModal = document.getElementById("code-modal");
+            const codeBlock = document.getElementById("code-block");
+            const modalTitle = document.getElementById("modal-title");
+
+            // Toggle Dropdown
+            codeBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                codeDropdown.classList.toggle("show");
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", (e) => {
+                if (
+                    !codeBtn.contains(e.target) &&
+                    !codeDropdown.contains(e.target)
+                ) {
+                    codeDropdown.classList.remove("show");
+                }
+            });
+
+            // Code Snippets Data
+            const snippets = {
+                starry: {
+                    html: `<canvas id="star-bg"></canvas>`,
+                    css: `#star-bg {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
   z-index: -1;
   pointer-events: none;
 }`,
-          js: `// 1. Config & Init
+                    js: `// 1. Config & Init
 const config = {
   density: 4000, // Lower = more stars
   speed: 0.002,
@@ -1077,14 +789,14 @@ const config = {
 
 function initStars() {
   stars = [];
-  const count = Math.floor((maxDim * maxDim) / config.density); 
-  
+  const count = Math.floor((maxDim * maxDim) / config.density);
+
   for (let i = 0; i < count; i++) {
     stars.push({
       x: (Math.random() - 0.5) * maxDim,
       y: (Math.random() - 0.5) * maxDim,
       // Store base speed for smooth updates
-      speed: (Math.random() * config.speed) + (config.speed / 2), 
+      speed: (Math.random() * config.speed) + (config.speed / 2),
       // ...
     });
   }
@@ -1104,13 +816,13 @@ function animate() {
   // Global rotation from config
   rotation += config.rotation;
   ctx.rotate(rotation);
-  
+
   stars.forEach(star => { ... });
-}`
-        },
-        mountains: {
-          html: `<canvas id="mountain-bg"></canvas>`,
-          css: `#mountain-bg {
+}`,
+                },
+                mountains: {
+                    html: `<canvas id="mountain-bg"></canvas>`,
+                    css: `#mountain-bg {
   position: fixed;
   top: 0;
   left: 0;
@@ -1119,7 +831,7 @@ function animate() {
   z-index: -1;
   pointer-events: none;
 }`,
-          js: `// 1. Config & Color
+                    js: `// 1. Config & Color
 const config = {
   layers: 3,
   height: 100,
@@ -1136,7 +848,7 @@ function initMountains(preserve = false) {
   for (let l = 0; l < config.layers; l++) {
     // Align to Front to preserve depth when adding layers
     const oldL = l - (config.layers - oldLayers);
-    
+
     if (preserve && oldMountains[oldL]) {
        // Reuse & Shift Y (Morph)
        // ... preserves shape & noise ...
@@ -1150,145 +862,250 @@ function initMountains(preserve = false) {
 
 // 3. Render with Depth & Color
 function animate() {
-  // Cached color from hexToRgb (outside loop)
-  const { r, g, b } = cachedMtnColor;
+  // Parse hex color
+  const { r, g, b } = hexToRgb(config.color);
 
   mountains.forEach((layer, index) => {
     // Parallax
     const parallaxX = (mouseX - 0.5) * (10 + index * 20);
-    
+
     // Depth Calculation (0=Front, Max=Back)
     const depth = mountains.length - 1 - index;
-    
+
     // Atmospheric Perspective
     // Back layers are lighter (+20 rgb per layer)
     const lighten = depth * 20;
     const lr = Math.min(255, r + lighten);
     const lg = Math.min(255, g + lighten);
     const lb = Math.min(255, b + lighten);
-    
+
     // Opacity (Front=0.95, Back=0.85)
     const opacity = 0.95 - (depth * 0.05);
-    
+
     ctx.fillStyle = \`rgba(\${lr}, \${lg}, \${lb}, \${opacity})\`;
     ctx.fill();
   });
-}`
-        }
-      };
+}`,
+                },
+            };
 
-      // Simple Syntax Highlighter
-      function highlight(code, lang) {
-        if (!code) return '';
-        
-        // Escape HTML
-        let html = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            // Simple Syntax Highlighter
+            function highlight(code, lang) {
+                if (!code) return "";
 
-        if (lang === 'js') {
-          // Tokenize strings and comments to prevent highlighting collision
-          const tokens = [];
-          const save = (type, content) => {
-            tokens.push({type, content});
-            return `___TOKEN${tokens.length-1}___`;
-          };
+                // Escape HTML
+                let html = code
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
 
-          // 1. Hide Strings (Template literals, single/double quotes)
-          html = html.replace(/`[^`]*`/g, m => save('string', m));
-          html = html.replace(/(['"])(?:(?=(\\?))\2.)*?\1/g, m => save('string', m));
-          
-          // 2. Hide Comments
-          html = html.replace(/\/\/.*/g, m => save('comment', m));
+                if (lang === "js") {
+                    // Tokenize strings and comments to prevent highlighting collision
+                    const tokens = [];
+                    const save = (type, content) => {
+                        tokens.push({ type, content });
+                        return `___TOKEN${tokens.length - 1}___`;
+                    };
 
-          // 3. Highlight Keywords/Built-ins/Numbers in the safe text
-          html = html
-            .replace(/\b(function|const|let|var|if|else|for|return|new|this|true|false)\b/g, '<span class="hl-keyword">$1</span>')
-            .replace(/\b(document|window|Math|console|ctx)\b/g, '<span class="hl-builtin">$1</span>')
-            .replace(/\b\d+\b/g, '<span class="hl-number">$&</span>');
+                    // 1. Hide Strings (Template literals, single/double quotes)
+                    html = html.replace(/`[^`]*`/g, (m) => save("string", m));
+                    html = html.replace(/(['"])(?:(?=(\\?))\2.)*?\1/g, (m) =>
+                        save("string", m),
+                    );
 
-          // 4. Restore Tokens
-          tokens.forEach((token, i) => {
-            const cls = token.type === 'string' ? 'hl-string' : 'hl-comment';
-            html = html.replace(`___TOKEN${i}___`, `<span class="${cls}">${token.content}</span>`);
-          });
+                    // 2. Hide Comments
+                    html = html.replace(/\/\/.*/g, (m) => save("comment", m));
 
-        } else if (lang === 'html') {
-          // 1. Hide Comments
-          html = html.replace(/&lt;!--.*?--&gt;/g, m => {
-             // Don't use save() here if we don't want to mix HTML/JS tokens, but fine.
-             // We need specific placeholders.
-             return `<span class="hl-comment">${m}</span>`; // Simple replace is fine for comments if done first
-          });
+                    // 3. Highlight Keywords/Built-ins/Numbers in the safe text
+                    html = html
+                        .replace(
+                            /\b(function|const|let|var|if|else|for|while|return|new|this|true|false|class|extends|import|export|default|async|await|try|catch|throw|switch|case|break|continue|typeof|instanceof|in|of|yield|delete|void|debugger|with|do|finally)\b/g,
+                            '<span class="hl-keyword">$1</span>',
+                        )
+                        .replace(
+                            /\b(document|window|Math|console|ctx|Date|JSON|Array|Object|String|Number|Boolean|RegExp|Error|Promise|Set|Map|WeakMap|WeakSet|Symbol|parseInt|parseFloat|isNaN|isFinite|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent|escape|unescape|eval|setTimeout|setInterval|clearTimeout|clearInterval|requestAnimationFrame|cancelAnimationFrame|addEventListener|removeEventListener|dispatchEvent|localStorage|sessionStorage|fetch|navigator|location|history|screen)\b/g,
+                            '<span class="hl-builtin">$1</span>',
+                        )
+                        .replace(
+                            /\b\d+\b/g,
+                            '<span class="hl-number">$&</span>',
+                        );
 
-          html = html.replace(/&lt;(\/?[a-z0-9]+)(.*?)&gt;/gi, function(match, tag, content) {
-              // Tokenize attributes values (strings) to prevent collision with class="hl-attr"
-              const tokens = [];
-              const save = (str) => {
-                tokens.push(str);
-                return `___TOKEN${tokens.length-1}___`;
-              };
+                    // 4. Restore Tokens
+                    tokens.forEach((token, i) => {
+                        const cls =
+                            token.type === "string"
+                                ? "hl-string"
+                                : "hl-comment";
+                        html = html.replace(
+                            `___TOKEN${i}___`,
+                            `<span class="${cls}">${token.content}</span>`,
+                        );
+                    });
+                } else if (lang === "html") {
+                    // 1. Hide Comments
+                    html = html.replace(/&lt;!--.*?--&gt;/g, (m) => {
+                        // Don't use save() here if we don't want to mix HTML/JS tokens, but fine.
+                        // We need specific placeholders.
+                        return `<span class="hl-comment">${m}</span>`; // Simple replace is fine for comments if done first
+                    });
 
-              // Hide strings
-              let safeContent = content.replace(/(['"])(?:(?=(\\?))\2.)*?\1/g, m => save(m));
-              
-              // Highlight attributes
-              safeContent = safeContent.replace(/([a-z-]+)=/gi, '<span class="hl-attr">$1</span>=');
-              
-              // Restore strings
-              tokens.forEach((str, i) => {
-                safeContent = safeContent.replace(`___TOKEN${i}___`, `<span class="hl-string">${str}</span>`);
-              });
+                    html = html.replace(
+                        /&lt;(\/?[a-z0-9]+)(.*?)&gt;/gi,
+                        function (match, tag, content) {
+                            // Tokenize attributes values (strings) to prevent collision with class="hl-attr"
+                            const tokens = [];
+                            const save = (str) => {
+                                tokens.push(str);
+                                return `___TOKEN${tokens.length - 1}___`;
+                            };
 
-              return `&lt;<span class="hl-tag">${tag}</span>${safeContent}&gt;`;
-            });
-        } else if (lang === 'css') {
-           html = html
-            .replace(/\/\*.*?\*\//g, '<span class="hl-comment">$&</span>')
-            .replace(/([a-z-]+):/g, '<span class="hl-attr">$1</span>:')
-            .replace(/([#\.][a-z0-9_-]+)/gi, '<span class="hl-keyword">$1</span>');
-        }
-        return html;
-      }
+                            // Hide strings
+                            let safeContent = content.replace(
+                                /(['"])(?:(?=(\\?))\2.)*?\1/g,
+                                (m) => save(m),
+                            );
 
-      // Show Modal
-      function showCode(type) {
-        codeDropdown.classList.remove('show');
-        const data = snippets[type];
-        const contentDiv = document.getElementById('code-content');
-        
-        modalTitle.textContent = type === 'starry' ? 'Starry Night Logic' : 'Mountain Parallax Logic';
-        
-        contentDiv.innerHTML = `
+                            // Highlight attributes
+                            safeContent = safeContent.replace(
+                                /([a-z-]+)=/gi,
+                                '<span class="hl-attr">$1</span>=',
+                            );
+
+                            // Restore strings
+                            tokens.forEach((str, i) => {
+                                safeContent = safeContent.replace(
+                                    `___TOKEN${i}___`,
+                                    `<span class="hl-string">${str}</span>`,
+                                );
+                            });
+
+                            return `&lt;<span class="hl-tag">${tag}</span>${safeContent}&gt;`;
+                        },
+                    );
+                } else if (lang === "css") {
+                    html = html
+                        .replace(
+                            /\/\*.*?\*\//g,
+                            '<span class="hl-comment">$&</span>',
+                        )
+                        .replace(
+                            /([a-z-]+):/g,
+                            '<span class="hl-attr">$1</span>:',
+                        )
+                        .replace(
+                            /([#\.][a-z0-9_-]+)/gi,
+                            '<span class="hl-keyword">$1</span>',
+                        );
+                }
+                return html;
+            }
+
+            // Show Modal
+            function showCode(type) {
+                codeDropdown.classList.remove("show");
+                const data = snippets[type];
+                const contentDiv = document.getElementById("code-content");
+
+                modalTitle.textContent =
+                    type === "starry"
+                        ? "Starry Night Logic"
+                        : "Mountain Parallax Logic";
+
+                contentDiv.innerHTML = `
           <div class="code-section">
             <div class="code-header">HTML</div>
-            <pre>${highlight(data.html, 'html')}</pre>
+            <pre>${highlight(data.html, "html")}</pre>
           </div>
           <div class="code-section">
             <div class="code-header">CSS</div>
-            <pre>${highlight(data.css, 'css')}</pre>
+            <pre>${highlight(data.css, "css")}</pre>
           </div>
           <div class="code-section">
             <div class="code-header">JavaScript</div>
-            <pre>${highlight(data.js, 'js')}</pre>
+            <pre>${highlight(data.js, "js")}</pre>
           </div>
         `;
-        
-        codeModal.classList.add('show');
-      }
 
-      // Close Modal
-      function closeModal() {
-        codeModal.classList.remove('show');
-      }
-      
-      // Close modal on outside click
-      codeModal.addEventListener('click', (e) => {
-        if (e.target === codeModal) closeModal();
-      });
+                codeModal.classList.add("show");
+            }
 
-      // PostHog Analytics
-      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-      posthog.init('phc_wANjAdyr8WJ4zSb3Zb81QqY3nihbZggi2J2KLsW2VRy', {api_host: 'https://us.i.posthog.com'})
-      posthog.capture('gubala.dev: visited');
-    </script>
-  </body>
+            // Close Modal
+            function closeModal() {
+                codeModal.classList.remove("show");
+            }
+
+            // Close modal on outside click
+            codeModal.addEventListener("click", (e) => {
+                if (e.target === codeModal) closeModal();
+            });
+
+            // PostHog Analytics
+            !(function (t, e) {
+                var o, n, p, r;
+                e.__SV ||
+                    ((window.posthog = e),
+                    (e._i = []),
+                    (e.init = function (i, s, a) {
+                        function g(t, e) {
+                            var o = e.split(".");
+                            (2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                                (t[e] = function () {
+                                    t.push(
+                                        [e].concat(
+                                            Array.prototype.slice.call(
+                                                arguments,
+                                                0,
+                                            ),
+                                        ),
+                                    );
+                                }));
+                        }
+                        (((p = t.createElement("script")).type =
+                            "text/javascript"),
+                            (p.crossOrigin = "anonymous"),
+                            (p.async = !0),
+                            (p.src =
+                                s.api_host.replace(
+                                    ".i.posthog.com",
+                                    "-assets.i.posthog.com",
+                                ) + "/static/array.js"),
+                            (r =
+                                t.getElementsByTagName(
+                                    "script",
+                                )[0]).parentNode.insertBefore(p, r));
+                        var u = e;
+                        for (
+                            void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                                u.people = u.people || [],
+                                u.toString = function (t) {
+                                    var e = "posthog";
+                                    return (
+                                        "posthog" !== a && (e += "." + a),
+                                        t || (e += " (stub)"),
+                                        e
+                                    );
+                                },
+                                u.people.toString = function () {
+                                    return u.toString(1) + ".people (stub)";
+                                },
+                                o =
+                                    "init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(
+                                        " ",
+                                    ),
+                                n = 0;
+                            n < o.length;
+                            n++
+                        )
+                            g(u, o[n]);
+                        e._i.push([i, s, a]);
+                    }),
+                    (e.__SV = 1));
+            })(document, window.posthog || []);
+            posthog.init("phc_wANjAdyr8WJ4zSb3Zb81QqY3nihbZggi2J2KLsW2VRy", {
+                api_host: "https://us.i.posthog.com",
+            });
+            posthog.capture("gubala.dev: visited");
+        </script>
+    </body>
 </html>
